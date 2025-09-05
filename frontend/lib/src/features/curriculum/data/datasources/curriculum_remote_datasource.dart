@@ -1,3 +1,4 @@
+import 'dart:convert';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/network/api_client.dart';
 import '../../../../core/models/board_model.dart';
@@ -20,10 +21,17 @@ class CurriculumRemoteDataSourceImpl implements CurriculumRemoteDataSource {
   @override
   Future<List<BoardModel>> getBoards() async {
     final response = await apiClient.get(AppConstants.boardsEndpoint);
-    
-    final List<dynamic> boardsData = response.data['boards'] ?? response.data;
+    var data = response.data;
+    if (data is String) {
+      try { data = json.decode(data); } catch (_) {}
+    }
+    final List<dynamic> boardsData =
+        (data is List) ? data : (data['boards'] as List? ?? const []);
     return boardsData
-        .map((board) => BoardModel.fromJson(board as Map<String, dynamic>))
+        .map((board) {
+          final map = board as Map<String, dynamic>;
+          return BoardModel(id: (map['id']).toString(), name: map['name'] as String);
+        })
         .toList();
   }
 
@@ -33,11 +41,20 @@ class CurriculumRemoteDataSourceImpl implements CurriculumRemoteDataSource {
       AppConstants.classesEndpoint,
       queryParameters: {'board_id': boardId},
     );
-    
-    final List<dynamic> classesData = response.data['classes'] ?? response.data;
-    return classesData
-        .map((classData) => ClassModel.fromJson(classData as Map<String, dynamic>))
-        .toList();
+    var data = response.data;
+    if (data is String) {
+      try { data = json.decode(data); } catch (_) {}
+    }
+    final List<dynamic> classesData =
+        (data is List) ? data : (data['classes'] as List? ?? const []);
+    return classesData.map((classData) {
+      final map = classData as Map<String, dynamic>;
+      final idStr = (map['id']).toString();
+      final name = map['name'] as String? ?? '';
+      final match = RegExp(r'\d+').firstMatch(name);
+      final classNum = int.tryParse(match?.group(0) ?? '') ?? int.tryParse(idStr) ?? 0;
+      return ClassModel(id: idStr, boardId: boardId, classNumber: classNum);
+    }).toList();
   }
 
   @override
@@ -46,8 +63,12 @@ class CurriculumRemoteDataSourceImpl implements CurriculumRemoteDataSource {
       AppConstants.subjectsEndpoint,
       queryParameters: {'class_id': classId},
     );
-    
-    final List<dynamic> subjectsData = response.data['subjects'] ?? response.data;
+    var data = response.data;
+    if (data is String) {
+      try { data = json.decode(data); } catch (_) {}
+    }
+    final List<dynamic> subjectsData =
+        (data is List) ? data : (data['subjects'] as List? ?? const []);
     return subjectsData
         .map((subject) => SubjectModel.fromJson(subject as Map<String, dynamic>))
         .toList();
@@ -59,8 +80,12 @@ class CurriculumRemoteDataSourceImpl implements CurriculumRemoteDataSource {
       AppConstants.chaptersEndpoint,
       queryParameters: {'subject_id': subjectId},
     );
-    
-    final List<dynamic> chaptersData = response.data['chapters'] ?? response.data;
+    var data = response.data;
+    if (data is String) {
+      try { data = json.decode(data); } catch (_) {}
+    }
+    final List<dynamic> chaptersData =
+        (data is List) ? data : (data['chapters'] as List? ?? const []);
     return chaptersData
         .map((chapter) => ChapterModel.fromJson(chapter as Map<String, dynamic>))
         .toList();

@@ -13,8 +13,11 @@ class BoardModel extends Equatable {
     required this.name,
   });
 
-  factory BoardModel.fromJson(Map<String, dynamic> json) =>
-      _$BoardModelFromJson(json);
+  // Accept id as int or string
+  factory BoardModel.fromJson(Map<String, dynamic> json) => BoardModel(
+        id: (json['id'] ?? '').toString(),
+        name: json['name'] as String,
+      );
 
   Map<String, dynamic> toJson() => _$BoardModelToJson(this);
 

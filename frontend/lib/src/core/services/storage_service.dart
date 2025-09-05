@@ -1,46 +1,42 @@
 import 'dart:convert';
 // import 'package:flutter_secure_storage/flutter_secure_storage.dart';  // Temporarily disabled
-import 'package:shared_preferences/shared_preferences.dart';
+// import 'package:shared_preferences/shared_preferences.dart';  // Temporarily disabled
 import '../constants/app_constants.dart';
 import '../models/user_model.dart';
 
 class StorageService {
-  // static const _secureStorage = FlutterSecureStorage(  // Temporarily disabled
-  //   aOptions: AndroidOptions(
-  //     encryptedSharedPreferences: true,
-  //   ),
-  // );
-
-  late final SharedPreferences _prefs;
+  // In-memory storage for now (temporary solution)
+  final Map<String, dynamic> _storage = {};
 
   Future<void> init() async {
-    _prefs = await SharedPreferences.getInstance();
+    // Initialize in-memory storage
+    print('StorageService initialized with in-memory storage');
   }
 
-  // Storage Methods (using shared_preferences temporarily)
+  // Storage Methods (using in-memory storage temporarily)
   Future<void> saveAccessToken(String token) async {
-    await _prefs.setString(AppConstants.accessTokenKey, token);
+    _storage[AppConstants.accessTokenKey] = token;
   }
 
   String? getAccessToken() {
-    return _prefs.getString(AppConstants.accessTokenKey);
+    return _storage[AppConstants.accessTokenKey] as String?;
   }
 
   Future<void> saveRefreshToken(String token) async {
-    await _prefs.setString(AppConstants.refreshTokenKey, token);
+    _storage[AppConstants.refreshTokenKey] = token;
   }
 
   String? getRefreshToken() {
-    return _prefs.getString(AppConstants.refreshTokenKey);
+    return _storage[AppConstants.refreshTokenKey] as String?;
   }
 
   Future<void> saveUserData(UserModel user) async {
     final userJson = json.encode(user.toJson());
-    await _prefs.setString(AppConstants.userDataKey, userJson);
+    _storage[AppConstants.userDataKey] = userJson;
   }
 
   UserModel? getUserData() {
-    final userJson = _prefs.getString(AppConstants.userDataKey);
+    final userJson = _storage[AppConstants.userDataKey] as String?;
     if (userJson != null) {
       try {
         final userMap = json.decode(userJson) as Map<String, dynamic>;
@@ -54,68 +50,65 @@ class StorageService {
   }
 
   Future<void> clearTokens() async {
-    await _prefs.remove(AppConstants.accessTokenKey);
-    await _prefs.remove(AppConstants.refreshTokenKey);
+    _storage.remove(AppConstants.accessTokenKey);
+    _storage.remove(AppConstants.refreshTokenKey);
   }
 
   Future<void> clearUserData() async {
-    await _prefs.remove(AppConstants.userDataKey);
+    _storage.remove(AppConstants.userDataKey);
   }
 
   Future<void> clearAllSecureData() async {
-    await _prefs.clear();
+    _storage.clear();
   }
 
-  // Storage Methods (using shared_preferences)
+  // Storage Methods (using in-memory storage)
   Future<void> setOnboardingCompleted(bool completed) async {
-    await _prefs.setBool(AppConstants.onboardingCompletedKey, completed);
+    _storage[AppConstants.onboardingCompletedKey] = completed;
   }
 
   bool getOnboardingCompleted() {
-    return _prefs.getBool(AppConstants.onboardingCompletedKey) ?? false;
+    return _storage[AppConstants.onboardingCompletedKey] as bool? ?? false;
   }
 
   Future<void> setSelectedBoard(String boardId) async {
-    await _prefs.setString(AppConstants.selectedBoardKey, boardId);
+    _storage[AppConstants.selectedBoardKey] = boardId;
   }
 
   String? getSelectedBoard() {
-    return _prefs.getString(AppConstants.selectedBoardKey);
+    return _storage[AppConstants.selectedBoardKey] as String?;
   }
 
   Future<void> setSelectedClass(String classId) async {
-    await _prefs.setString(AppConstants.selectedClassKey, classId);
+    _storage[AppConstants.selectedClassKey] = classId;
   }
 
   String? getSelectedClass() {
-    return _prefs.getString(AppConstants.selectedClassKey);
+    return _storage[AppConstants.selectedClassKey] as String?;
   }
 
   Future<void> setUserPoints(int points) async {
-    await _prefs.setInt(AppConstants.userPointsKey, points);
+    _storage[AppConstants.userPointsKey] = points;
   }
 
   int getUserPoints() {
-    return _prefs.getInt(AppConstants.userPointsKey) ?? 0;
+    return _storage[AppConstants.userPointsKey] as int? ?? 0;
   }
 
   Future<void> setDailyStreak(int streak) async {
-    await _prefs.setInt(AppConstants.dailyStreakKey, streak);
+    _storage[AppConstants.dailyStreakKey] = streak;
   }
 
   int getDailyStreak() {
-    return _prefs.getInt(AppConstants.dailyStreakKey) ?? 0;
+    return _storage[AppConstants.dailyStreakKey] as int? ?? 0;
   }
 
   Future<void> setLastActiveDate(DateTime date) async {
-    await _prefs.setString(
-      AppConstants.lastActiveDate,
-      date.toIso8601String(),
-    );
+    _storage[AppConstants.lastActiveDate] = date.toIso8601String();
   }
 
   DateTime? getLastActiveDate() {
-    final dateString = _prefs.getString(AppConstants.lastActiveDate);
+    final dateString = _storage[AppConstants.lastActiveDate] as String?;
     if (dateString != null) {
       try {
         return DateTime.parse(dateString);

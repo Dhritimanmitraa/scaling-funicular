@@ -28,30 +28,30 @@ android {
     compileSdk 34
     ndkVersion "25.1.8937393"
 
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
+            compileOptions {
+            sourceCompatibility JavaVersion.VERSION_17
+            targetCompatibility JavaVersion.VERSION_17
+        }
 
-    kotlinOptions {
-        jvmTarget = '1.8'
-    }
+        kotlinOptions {
+            jvmTarget = '17'
+        }
 
-    // Force Java 8 for all tasks
+    // Force Java 17 for all tasks
     tasks.withType(JavaCompile) {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
         options.compilerArgs += ['-Xlint:-options']
     }
     
-    // Force Java 8 for all subprojects
+    // Force Java 17 for all subprojects
     subprojects {
         afterEvaluate { project ->
             if (project.hasProperty('android')) {
                 project.android {
                     compileOptions {
-                        sourceCompatibility JavaVersion.VERSION_1_8
-                        targetCompatibility JavaVersion.VERSION_1_8
+                        sourceCompatibility JavaVersion.VERSION_17
+                        targetCompatibility JavaVersion.VERSION_17
                     }
                 }
             }
@@ -89,3 +89,5 @@ android {
 flutter {
     source '../..'
 }
+
+apply plugin: 'com.google.gms.google-services'
