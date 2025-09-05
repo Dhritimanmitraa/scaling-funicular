@@ -107,11 +107,23 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     final response = await apiClient.put(
       AppConstants.updateProfileEndpoint,
       data: {
-        'board_id': boardId,
-        'class_id': classId,
+        'selectedBoardId': boardId,
+        'selectedClassId': classId,
       },
     );
 
-    return AuthUserModel.fromJson(response.data);
+    // Backend returns: { success, message, data: { user: {...} } }
+    final body = response.data as Map?;
+    final data = body?['data'] as Map?;
+    if (data == null) {
+      throw Exception(body?['message'] ?? AppConstants.serverErrorMessage);
+    }
+
+    final userJson = (data['user'] as Map?)?.cast<String, dynamic>();
+    if (userJson == null) {
+      throw Exception('Invalid curriculum update response');
+    }
+
+    return AuthUserModel.fromJson(userJson);
   }
 }

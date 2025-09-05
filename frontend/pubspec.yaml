@@ -28,23 +28,23 @@ dependencies:
   json_annotation: ^4.9.0
   
   # Local Storage
-  # shared_preferences: ^2.3.2  # Temporarily disabled due to JdkImageTransform issue
-  # flutter_secure_storage: ^9.2.2  # Temporarily disabled due to path_provider dependency
+  shared_preferences: ^2.2.1
+  flutter_secure_storage: ^9.0.0
   
   # Video Player
-  # video_player: ^2.9.1  # Temporarily disabled for build testing
-  # chewie: ^1.8.5  # Temporarily disabled for build testing
+  video_player: ^2.8.2
+  chewie: ^1.5.0
   
   # Connectivity
-  # connectivity_plus: ^6.0.5  # Temporarily disabled for build testing
+  connectivity_plus: ^4.0.2
   
   # Environment Variables
   flutter_dotenv: ^5.1.0
   
   # Analytics & Error Reporting
-  # firebase_core: ^3.6.0  # Temporarily disabled for build testing
-  # firebase_analytics: ^11.3.3  # Temporarily disabled for build testing
-  # sentry_flutter: ^8.9.0  # Temporarily disabled for build testing
+  firebase_core: ^3.15.2
+  firebase_analytics: ^11.6.0
+  sentry_flutter: ^8.9.0
   
   # Utilities
   intl: ^0.19.0
@@ -74,6 +74,7 @@ flutter:
     - assets/images/
     - assets/fonts/
     - assets/lottie/
+    - assets/videos/
     - .env.local
   
   # fonts:

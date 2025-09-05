@@ -35,6 +35,7 @@ class _CurriculumSelectionScreenState extends State<CurriculumSelectionScreen> {
   }
 
   void _onBoardSelected(BoardModel board) {
+    print('Board selected: ${board.name}');
     setState(() {
       selectedBoard = board;
       selectedClass = null; // Reset class selection
@@ -42,25 +43,46 @@ class _CurriculumSelectionScreenState extends State<CurriculumSelectionScreen> {
     });
     
     // Load classes for selected board
+    print('Loading classes for board: ${board.id}');
     context.read<CurriculumBloc>().add(
       CurriculumClassesRequested(boardId: board.id),
     );
   }
 
   void _onClassSelected(ClassModel classModel) {
+    print('Class selected: Class ${classModel.classNumber}');
     setState(() {
       selectedClass = classModel;
     });
   }
 
   void _handleContinue() {
+    print('Continue button clicked!');
+    print('Selected Board: ${selectedBoard?.name}');
+    print('Selected Class: ${selectedClass?.classNumber}');
+    
     if (selectedBoard != null && selectedClass != null) {
-      context.read<AuthBloc>().add(
-        AuthCurriculumUpdateRequested(
-          boardId: selectedBoard!.id,
-          classId: selectedClass!.id,
-        ),
-      );
+      print('Both board and class selected, proceeding...');
+      // Check if it's CBSE Class 12 - show VR video selection
+      if (selectedBoard!.name.toLowerCase().contains('cbse') && 
+          selectedClass!.classNumber == 12) {
+        print('CBSE Class 12 detected, navigating to VR selection');
+        context.go(RouteNames.vrVideoSelection, extra: {
+          'boardId': selectedBoard!.id,
+          'classId': selectedClass!.id,
+          'boardName': selectedBoard!.name,
+          'classNumber': selectedClass!.classNumber,
+        });
+      } else {
+        print('Regular flow, navigating to register');
+        // Regular flow for other boards/classes
+        context.go(RouteNames.register, extra: {
+          'selectedBoardId': selectedBoard!.id,
+          'selectedClassId': selectedClass!.id,
+        });
+      }
+    } else {
+      print('Missing selection - Board: ${selectedBoard != null}, Class: ${selectedClass != null}');
     }
   }
 
@@ -203,6 +225,10 @@ class _CurriculumSelectionScreenState extends State<CurriculumSelectionScreen> {
   }
 
   Widget _buildBoardSelection(List<BoardModel> boards) {
+    print('Building board selection with ${boards.length} boards');
+    for (var board in boards) {
+      print('Available board: ${board.name} (ID: ${board.id})');
+    }
     return Column(
       children: boards.map((board) {
         final isSelected = selectedBoard?.id == board.id;

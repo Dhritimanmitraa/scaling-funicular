@@ -25,8 +25,8 @@ class AppConstants {
   static const String progressEndpoint = '/content/progress';
   
   // User
-  static const String profileEndpoint = '/user/profile';
-  static const String updateProfileEndpoint = '/user/profile/update';
+  static const String profileEndpoint = '/profile';
+  static const String updateProfileEndpoint = '/profile';
   
   // Storage Keys
   static const String accessTokenKey = 'access_token';
@@ -49,7 +49,7 @@ class AppConstants {
   ];
   
   // Available Classes
-  static const List<int> availableClasses = [5, 6, 7, 8, 9, 10];
+  static const List<int> availableClasses = [5, 6, 7, 8, 9, 10, 11, 12];
   
   // Gamification
   static const int videoCompletionPoints = 50;

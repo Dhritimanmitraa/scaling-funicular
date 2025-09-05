@@ -73,6 +73,9 @@ app.use('/api/curriculum', curriculumRoutes);
 app.use('/api/content', contentRoutes);
 app.use('/api/profile', profileRoutes);
 
+// Temporary backward compatibility route for old frontend
+app.use('/api/user/profile', profileRoutes);
+
 // 404 handler
 app.use('*', (req, res) => {
   res.status(404).json({ 

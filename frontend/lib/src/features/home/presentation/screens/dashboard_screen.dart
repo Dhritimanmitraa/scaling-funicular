@@ -4,12 +4,14 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/widgets/custom_button.dart';
+import '../../../../core/widgets/vr_video_card.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../auth/presentation/bloc/auth_state.dart';
 import '../../../curriculum/presentation/bloc/curriculum_bloc.dart';
 import '../../../curriculum/presentation/bloc/curriculum_event.dart';
 import '../../../curriculum/presentation/bloc/curriculum_state.dart';
 import '../../../curriculum/presentation/screens/subjects_screen.dart';
+import '../../../content/presentation/screens/vr_video_player.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -164,6 +166,32 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         () {
                           // TODO: Navigate to random quiz
                         },
+                      ),
+                      
+                      const SizedBox(height: 32),
+                      
+                      // VR Learning Section
+                      const Text(
+                        'VR Learning Experience',
+                        style: AppTextStyles.h3,
+                      ),
+                      const SizedBox(height: 16),
+                      
+                      VRVideoCard(
+                        title: 'Virtual Solar System Tour',
+                        description: 'Explore our solar system in immersive 360° VR experience',
+                        duration: '5:30',
+                        thumbnail: 'assets/images/planets.png',
+                        onTap: () => _onVRVideoTap(context, 0),
+                      ),
+                      const SizedBox(height: 16),
+                      
+                      VRVideoCard(
+                        title: '3D Human Anatomy Lab',
+                        description: 'Dive deep into human anatomy with interactive 360° exploration',
+                        duration: '8:45',
+                        thumbnail: 'assets/images/planets.png', // Using planets as placeholder
+                        onTap: () => _onVRVideoTap(context, 1),
                       ),
                     ]),
                   ),
@@ -352,5 +380,37 @@ class _DashboardScreenState extends State<DashboardScreen> {
     if (name.contains('geography')) return Icons.public;
     if (name.contains('biology')) return Icons.biotech;
     return Icons.school;
+  }
+
+  void _onVRVideoTap(BuildContext context, int index) {
+    String videoPath;
+    String title;
+    String description;
+
+    switch (index) {
+      case 0:
+        videoPath = 'assets/videos/solarsystem_vr.mp4';
+        title = 'Virtual Solar System Tour';
+        description = 'Explore our solar system in immersive 360° VR experience';
+        break;
+      case 1:
+        videoPath = 'assets/videos/anatomy_vr.mp4';
+        title = '3D Human Anatomy Lab';
+        description = 'Dive deep into human anatomy with interactive 360° exploration';
+        break;
+      default:
+        return;
+    }
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => VRVideoPlayer(
+          videoPath: videoPath,
+          title: title,
+          description: description,
+        ),
+      ),
+    );
   }
 }

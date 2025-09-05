@@ -75,13 +75,21 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     final request = RegisterRequest(
       email: event.email,
       password: event.password,
+      boardId: event.selectedBoardId,
+      classId: event.selectedClassId,
     );
 
     final result = await authService.register(request);
     result.fold(
       (failure) => emit(AuthError(message: failure.message)),
       (response) {
-        emit(AuthCurriculumSelectionRequired(user: response.user));
+        // If curriculum was provided during registration, user is fully authenticated
+        if (event.selectedBoardId != null && event.selectedClassId != null) {
+          emit(AuthAuthenticated(user: response.user));
+        } else {
+          // Otherwise, show curriculum selection
+          emit(AuthCurriculumSelectionRequired(user: response.user));
+        }
       },
     );
   }

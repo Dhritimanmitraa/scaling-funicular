@@ -18,11 +18,11 @@ const registerValidation = [
     .withMessage('Password must contain at least one uppercase letter, one lowercase letter, and one number'),
   body('selectedBoardId')
     .optional()
-    .isUUID()
+    .isString()
     .withMessage('Invalid board ID format'),
   body('selectedClassId')
     .optional()
-    .isUUID()
+    .isString()
     .withMessage('Invalid class ID format')
 ];
 
@@ -39,11 +39,11 @@ const loginValidation = [
 const updateProfileValidation = [
   body('selectedBoardId')
     .optional()
-    .isUUID()
+    .isString()
     .withMessage('Invalid board ID format'),
   body('selectedClassId')
     .optional()
-    .isUUID()
+    .isString()
     .withMessage('Invalid class ID format')
 ];
 

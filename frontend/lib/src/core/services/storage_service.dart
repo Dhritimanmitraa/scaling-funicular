@@ -18,7 +18,7 @@ class StorageService {
     _storage[AppConstants.accessTokenKey] = token;
   }
 
-  String? getAccessToken() {
+  Future<String?> getAccessToken() async {
     return _storage[AppConstants.accessTokenKey] as String?;
   }
 
@@ -26,7 +26,7 @@ class StorageService {
     _storage[AppConstants.refreshTokenKey] = token;
   }
 
-  String? getRefreshToken() {
+  Future<String?> getRefreshToken() async {
     return _storage[AppConstants.refreshTokenKey] as String?;
   }
 
@@ -120,8 +120,8 @@ class StorageService {
   }
 
   // Utility Methods
-  bool isLoggedIn() {
-    final token = getAccessToken();
+  Future<bool> isLoggedIn() async {
+    final token = await getAccessToken();
     return token != null && token.isNotEmpty;
   }
 

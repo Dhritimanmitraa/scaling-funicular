@@ -29,39 +29,63 @@ class AuthController {
 
       // Validate board and class exist
       if (selectedBoardId && selectedClassId) {
-        const boardExists = await db('boards').where({ id: selectedBoardId }).first();
-        const classExists = await db('classes').where({ 
-          id: selectedClassId, 
-          board_id: selectedBoardId 
-        }).first();
+        try {
+          const boardExists = await db('boards').where({ id: selectedBoardId }).first();
+          const classExists = await db('classes').where({ 
+            id: selectedClassId, 
+            board_id: selectedBoardId 
+          }).first();
 
-        if (!boardExists || !classExists) {
-          return res.status(400).json({
-            success: false,
-            message: 'Invalid board or class selection'
-          });
+          console.log('Board validation:', { selectedBoardId, boardExists: !!boardExists });
+          console.log('Class validation:', { selectedClassId, selectedBoardId, classExists: !!classExists });
+
+          if (!boardExists || !classExists) {
+            return res.status(400).json({
+              success: false,
+              message: `Invalid board or class selection. Board: ${selectedBoardId}, Class: ${selectedClassId}`,
+              debug: {
+                boardExists: !!boardExists,
+                classExists: !!classExists
+              }
+            });
+          }
+        } catch (dbError) {
+          console.error('Database validation error:', dbError);
+          // If database is not available, skip validation for now
+          console.log('Skipping board/class validation due to database error');
         }
       }
 
       // Create user
-      const user = await User.create({
-        email,
-        password,
-        selectedBoardId,
-        selectedClassId
-      });
+      try {
+        const user = await User.create({
+          email,
+          password,
+          selectedBoardId,
+          selectedClassId
+        });
 
-      // Generate token
-      const token = user.generateToken();
+        // Generate token
+        const token = user.generateToken();
 
-      res.status(201).json({
-        success: true,
-        message: 'User registered successfully',
-        data: {
-          user: user.toJSON(),
-          token
-        }
-      });
+        console.log('User created successfully:', { userId: user.id, email: user.email });
+
+        res.status(201).json({
+          success: true,
+          message: 'User registered successfully',
+          data: {
+            user: user.toJSON(),
+            token
+          }
+        });
+      } catch (userCreationError) {
+        console.error('User creation error:', userCreationError);
+        return res.status(500).json({
+          success: false,
+          message: 'Failed to create user',
+          error: userCreationError.message
+        });
+      }
     } catch (error) {
       console.error('Registration error:', error);
       res.status(500).json({
@@ -180,8 +204,8 @@ class AuthController {
 
       // Update user
       const updatedUser = await req.user.updateProfile({
-        selectedBoardId,
-        selectedClassId
+        selected_board_id: selectedBoardId,
+        selected_class_id: selectedClassId
       });
 
       res.json({

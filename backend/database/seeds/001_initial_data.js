@@ -31,265 +31,168 @@ exports.seed = async function(knex) {
     }
   ]);
 
-  await knex('classes').insert([
-    { id: 'class-1', name: 'Class 1', grade: 1, is_active: true },
-    { id: 'class-2', name: 'Class 2', grade: 2, is_active: true },
-    { id: 'class-3', name: 'Class 3', grade: 3, is_active: true },
-    { id: 'class-4', name: 'Class 4', grade: 4, is_active: true },
-    { id: 'class-5', name: 'Class 5', grade: 5, is_active: true },
-    { id: 'class-6', name: 'Class 6', grade: 6, is_active: true },
-    { id: 'class-7', name: 'Class 7', grade: 7, is_active: true },
-    { id: 'class-8', name: 'Class 8', grade: 8, is_active: true },
-    { id: 'class-9', name: 'Class 9', grade: 9, is_active: true },
-    { id: 'class-10', name: 'Class 10', grade: 10, is_active: true },
-    { id: 'class-11', name: 'Class 11', grade: 11, is_active: true },
-    { id: 'class-12', name: 'Class 12', grade: 12, is_active: true }
-  ]);
-
-  await knex('subjects').insert([
-    {
-      id: 'subject-physics',
-      name: 'Physics',
-      description: 'Physical Sciences',
-      icon: '⚛️',
-      is_active: true
-    },
-    {
-      id: 'subject-chemistry',
-      name: 'Chemistry',
-      description: 'Chemical Sciences',
-      icon: '🧪',
-      is_active: true
-    },
-    {
-      id: 'subject-biology',
-      name: 'Biology',
-      description: 'Life Sciences',
-      icon: '🧬',
-      is_active: true
-    },
-    {
-      id: 'subject-mathematics',
-      name: 'Mathematics',
-      description: 'Mathematical Sciences',
-      icon: '📐',
-      is_active: true
-    },
-    {
-      id: 'subject-english',
-      name: 'English',
-      description: 'English Language and Literature',
-      icon: '📚',
-      is_active: true
-    },
-    {
-      id: 'subject-hindi',
-      name: 'Hindi',
-      description: 'Hindi Language and Literature',
-      icon: '📖',
-      is_active: true
-    },
-    {
-      id: 'subject-history',
-      name: 'History',
-      description: 'Historical Studies',
-      icon: '🏛️',
-      is_active: true
-    },
-    {
-      id: 'subject-geography',
-      name: 'Geography',
-      description: 'Geographical Studies',
-      icon: '🌍',
-      is_active: true
-    },
-    {
-      id: 'subject-economics',
-      name: 'Economics',
-      description: 'Economic Studies',
-      icon: '💰',
-      is_active: true
-    },
-    {
-      id: 'subject-computer',
-      name: 'Computer Science',
-      description: 'Computer and Information Technology',
-      icon: '💻',
-      is_active: true
+  // Insert classes for each board (CBSE, ICSE, State Board)
+  const boards = ['board-cbse', 'board-icse', 'board-state'];
+  const classes = [];
+  
+  for (const boardId of boards) {
+    for (let grade = 1; grade <= 12; grade++) {
+      classes.push({
+        id: `${boardId}-class-${grade}`,
+        board_id: boardId,
+        class_number: grade,
+        is_active: true
+      });
     }
-  ]);
+  }
+  
+  await knex('classes').insert(classes);
 
-  await knex('chapters').insert([
-    // Physics Chapters for Class 9
-    {
-      id: 'chapter-motion-9',
-      name: 'Motion',
-      description: 'Understanding motion, speed, velocity, and acceleration',
-      subject_id: 'subject-physics',
-      class_id: 'class-9',
-      order: 1,
-      is_active: true
-    },
-    {
-      id: 'chapter-force-9',
-      name: 'Force and Laws of Motion',
-      description: 'Newton\'s laws of motion and their applications',
-      subject_id: 'subject-physics',
-      class_id: 'class-9',
-      order: 2,
-      is_active: true
-    },
-    {
-      id: 'chapter-gravitation-9',
-      name: 'Gravitation',
-      description: 'Universal law of gravitation and its effects',
-      subject_id: 'subject-physics',
-      class_id: 'class-9',
-      order: 3,
-      is_active: true
-    },
-    {
-      id: 'chapter-work-energy-9',
-      name: 'Work and Energy',
-      description: 'Work, energy, and power concepts',
-      subject_id: 'subject-physics',
-      class_id: 'class-9',
-      order: 4,
-      is_active: true
-    },
-    {
-      id: 'chapter-sound-9',
-      name: 'Sound',
-      description: 'Properties and characteristics of sound',
-      subject_id: 'subject-physics',
-      class_id: 'class-9',
-      order: 5,
-      is_active: true
-    },
+  // Insert subjects for each class
+  const subjects = [];
+  const subjectTemplates = [
+    { name: 'Physics', description: 'Physical Sciences', icon: '⚛️' },
+    { name: 'Chemistry', description: 'Chemical Sciences', icon: '🧪' },
+    { name: 'Biology', description: 'Life Sciences', icon: '🧬' },
+    { name: 'Mathematics', description: 'Mathematical Sciences', icon: '📐' },
+    { name: 'English', description: 'English Language and Literature', icon: '📚' },
+    { name: 'Hindi', description: 'Hindi Language and Literature', icon: '📖' },
+    { name: 'History', description: 'Historical Studies', icon: '🏛️' },
+    { name: 'Geography', description: 'Geographical Studies', icon: '🌍' },
+    { name: 'Economics', description: 'Economic Studies', icon: '💰' },
+    { name: 'Computer Science', description: 'Computer and Information Technology', icon: '💻' }
+  ];
 
-    // Chemistry Chapters for Class 9
-    {
-      id: 'chapter-matter-9',
-      name: 'Matter in Our Surroundings',
-      description: 'States of matter and their properties',
-      subject_id: 'subject-chemistry',
-      class_id: 'class-9',
-      order: 1,
-      is_active: true
-    },
-    {
-      id: 'chapter-atoms-9',
-      name: 'Atoms and Molecules',
-      description: 'Basic structure of atoms and molecules',
-      subject_id: 'subject-chemistry',
-      class_id: 'class-9',
-      order: 2,
-      is_active: true
-    },
-    {
-      id: 'chapter-structure-9',
-      name: 'Structure of the Atom',
-      description: 'Atomic structure and electron configuration',
-      subject_id: 'subject-chemistry',
-      class_id: 'class-9',
-      order: 3,
-      is_active: true
-    },
-
-    // Biology Chapters for Class 9
-    {
-      id: 'chapter-cell-9',
-      name: 'The Fundamental Unit of Life',
-      description: 'Cell structure and functions',
-      subject_id: 'subject-biology',
-      class_id: 'class-9',
-      order: 1,
-      is_active: true
-    },
-    {
-      id: 'chapter-tissues-9',
-      name: 'Tissues',
-      description: 'Plant and animal tissues',
-      subject_id: 'subject-biology',
-      class_id: 'class-9',
-      order: 2,
-      is_active: true
-    },
-    {
-      id: 'chapter-diversity-9',
-      name: 'Diversity in Living Organisms',
-      description: 'Classification of living organisms',
-      subject_id: 'subject-biology',
-      class_id: 'class-9',
-      order: 3,
-      is_active: true
-    },
-
-    // Mathematics Chapters for Class 9
-    {
-      id: 'chapter-number-systems-9',
-      name: 'Number Systems',
-      description: 'Real numbers and their properties',
-      subject_id: 'subject-mathematics',
-      class_id: 'class-9',
-      order: 1,
-      is_active: true
-    },
-    {
-      id: 'chapter-polynomials-9',
-      name: 'Polynomials',
-      description: 'Algebraic expressions and polynomials',
-      subject_id: 'subject-mathematics',
-      class_id: 'class-9',
-      order: 2,
-      is_active: true
-    },
-    {
-      id: 'chapter-coordinate-geometry-9',
-      name: 'Coordinate Geometry',
-      description: 'Cartesian plane and coordinate systems',
-      subject_id: 'subject-mathematics',
-      class_id: 'class-9',
-      order: 3,
-      is_active: true
-    },
-    {
-      id: 'chapter-linear-equations-9',
-      name: 'Linear Equations in Two Variables',
-      description: 'Solving linear equations with two variables',
-      subject_id: 'subject-mathematics',
-      class_id: 'class-9',
-      order: 4,
-      is_active: true
-    },
-
-    // Class 10 Chapters
-    {
-      id: 'chapter-light-10',
-      name: 'Light - Reflection and Refraction',
-      description: 'Properties of light and optical phenomena',
-      subject_id: 'subject-physics',
-      class_id: 'class-10',
-      order: 1,
-      is_active: true
-    },
-    {
-      id: 'chapter-electricity-10',
-      name: 'Electricity',
-      description: 'Electric current, potential, and circuits',
-      subject_id: 'subject-physics',
-      class_id: 'class-10',
-      order: 2,
-      is_active: true
-    },
-    {
-      id: 'chapter-magnetic-effects-10',
-      name: 'Magnetic Effects of Electric Current',
-      description: 'Electromagnetism and magnetic fields',
-      subject_id: 'subject-physics',
-      class_id: 'class-10',
-      order: 3,
-      is_active: true
+  for (const boardId of boards) {
+    for (let grade = 1; grade <= 12; grade++) {
+      const classId = `${boardId}-class-${grade}`;
+      
+      // Add core subjects for all classes
+      for (const subject of subjectTemplates) {
+        subjects.push({
+          id: `${classId}-${subject.name.toLowerCase().replace(' ', '-')}`,
+          class_id: classId,
+          name: subject.name,
+          description: subject.description,
+          icon: subject.icon,
+          is_active: true
+        });
+      }
     }
-  ]);
+  }
+  
+  await knex('subjects').insert(subjects);
+
+  // Insert chapters for each subject and class
+  const chapters = [];
+  
+  // Define chapter templates for each subject by class
+  const chapterTemplates = {
+    'physics': {
+      9: [
+        { name: 'Motion', description: 'Understanding motion, speed, velocity, and acceleration' },
+        { name: 'Force and Laws of Motion', description: 'Newton\'s laws of motion and their applications' },
+        { name: 'Gravitation', description: 'Universal law of gravitation and its effects' },
+        { name: 'Work and Energy', description: 'Work, energy, and power concepts' },
+        { name: 'Sound', description: 'Properties and characteristics of sound' }
+      ],
+      10: [
+        { name: 'Light - Reflection and Refraction', description: 'Properties of light and optical phenomena' },
+        { name: 'Electricity', description: 'Electric current, potential, and circuits' },
+        { name: 'Magnetic Effects of Electric Current', description: 'Electromagnetism and magnetic fields' },
+        { name: 'Sources of Energy', description: 'Renewable and non-renewable energy sources' }
+      ],
+      11: [
+        { name: 'Physical World and Measurement', description: 'Fundamental concepts and units' },
+        { name: 'Kinematics', description: 'Motion in one and two dimensions' },
+        { name: 'Laws of Motion', description: 'Newton\'s laws and their applications' },
+        { name: 'Work, Energy and Power', description: 'Energy conservation and power' },
+        { name: 'Motion of System of Particles', description: 'Center of mass and rotational motion' }
+      ],
+      12: [
+        { name: 'Electric Charges and Fields', description: 'Electrostatics and electric fields' },
+        { name: 'Electrostatic Potential and Capacitance', description: 'Electric potential and capacitors' },
+        { name: 'Current Electricity', description: 'Electric current and resistance' },
+        { name: 'Moving Charges and Magnetism', description: 'Magnetic fields and forces' },
+        { name: 'Electromagnetic Induction', description: 'Faraday\'s law and electromagnetic induction' }
+      ]
+    },
+    'chemistry': {
+      9: [
+        { name: 'Matter in Our Surroundings', description: 'States of matter and their properties' },
+        { name: 'Atoms and Molecules', description: 'Basic structure of atoms and molecules' },
+        { name: 'Structure of the Atom', description: 'Atomic structure and electron configuration' }
+      ],
+      10: [
+        { name: 'Chemical Reactions and Equations', description: 'Types of chemical reactions' },
+        { name: 'Acids, Bases and Salts', description: 'Properties and reactions of acids and bases' },
+        { name: 'Metals and Non-metals', description: 'Properties and uses of metals and non-metals' },
+        { name: 'Carbon and its Compounds', description: 'Organic chemistry basics' }
+      ],
+      11: [
+        { name: 'Some Basic Concepts of Chemistry', description: 'Fundamental concepts and calculations' },
+        { name: 'Structure of Atom', description: 'Atomic models and quantum mechanics' },
+        { name: 'Classification of Elements', description: 'Periodic table and periodicity' },
+        { name: 'Chemical Bonding', description: 'Types of chemical bonds' }
+      ],
+      12: [
+        { name: 'Solutions', description: 'Types of solutions and colligative properties' },
+        { name: 'Electrochemistry', description: 'Redox reactions and electrochemical cells' },
+        { name: 'Chemical Kinetics', description: 'Rate of chemical reactions' },
+        { name: 'Surface Chemistry', description: 'Adsorption and catalysis' }
+      ]
+    },
+    'mathematics': {
+      9: [
+        { name: 'Number Systems', description: 'Real numbers and their properties' },
+        { name: 'Polynomials', description: 'Algebraic expressions and polynomials' },
+        { name: 'Coordinate Geometry', description: 'Cartesian plane and coordinate systems' },
+        { name: 'Linear Equations in Two Variables', description: 'Solving linear equations with two variables' }
+      ],
+      10: [
+        { name: 'Real Numbers', description: 'Properties of real numbers' },
+        { name: 'Polynomials', description: 'Polynomial functions and their properties' },
+        { name: 'Pair of Linear Equations', description: 'Systems of linear equations' },
+        { name: 'Quadratic Equations', description: 'Solving quadratic equations' }
+      ],
+      11: [
+        { name: 'Sets', description: 'Set theory and operations' },
+        { name: 'Relations and Functions', description: 'Mathematical relations and functions' },
+        { name: 'Trigonometric Functions', description: 'Trigonometry and its applications' },
+        { name: 'Principle of Mathematical Induction', description: 'Proof techniques' }
+      ],
+      12: [
+        { name: 'Relations and Functions', description: 'Advanced function concepts' },
+        { name: 'Inverse Trigonometric Functions', description: 'Inverse trig functions and their properties' },
+        { name: 'Matrices', description: 'Matrix operations and applications' },
+        { name: 'Determinants', description: 'Determinants and their properties' }
+      ]
+    }
+  };
+
+  // Generate chapters for each board, class, and subject
+  for (const boardId of boards) {
+    for (let grade = 9; grade <= 12; grade++) {
+      const classId = `${boardId}-class-${grade}`;
+      
+      for (const [subjectName, gradeChapters] of Object.entries(chapterTemplates)) {
+        if (gradeChapters[grade]) {
+          const subjectId = `${classId}-${subjectName}`;
+          
+          gradeChapters[grade].forEach((chapter, index) => {
+            chapters.push({
+              id: `${subjectId}-${chapter.name.toLowerCase().replace(/[^a-z0-9]/g, '-')}`,
+              subject_id: subjectId,
+              name: chapter.name,
+              description: chapter.description,
+              chapter_number: index + 1,
+              is_active: true
+            });
+          });
+        }
+      }
+    }
+  }
+  
+  await knex('chapters').insert(chapters);
 };

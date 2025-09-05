@@ -13,7 +13,14 @@ import '../bloc/auth_event.dart';
 import '../bloc/auth_state.dart';
 
 class RegisterScreen extends StatefulWidget {
-  const RegisterScreen({super.key});
+  final String? selectedBoardId;
+  final String? selectedClassId;
+
+  const RegisterScreen({
+    super.key,
+    this.selectedBoardId,
+    this.selectedClassId,
+  });
 
   @override
   State<RegisterScreen> createState() => _RegisterScreenState();
@@ -41,6 +48,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
         AuthRegisterRequested(
           email: _emailController.text.trim(),
           password: _passwordController.text,
+          selectedBoardId: widget.selectedBoardId,
+          selectedClassId: widget.selectedClassId,
         ),
       );
     }

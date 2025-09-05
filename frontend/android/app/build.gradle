@@ -28,30 +28,35 @@ android {
     compileSdk 34
     ndkVersion "25.1.8937393"
 
-            compileOptions {
-            sourceCompatibility JavaVersion.VERSION_17
-            targetCompatibility JavaVersion.VERSION_17
-        }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_21
+        targetCompatibility JavaVersion.VERSION_21
+    }
 
-        kotlinOptions {
-            jvmTarget = '17'
-        }
+    kotlinOptions {
+        jvmTarget = '1.8' // Reverting to 1.8 for maximum compatibility, due to persistent error
+        // freeCompilerArgs += [' -Xjvm-default=all'] 
+    }
 
-    // Force Java 17 for all tasks
+    kotlin {
+        jvmToolchain(21)
+    }
+
+    // Force Java 21 for all tasks
     tasks.withType(JavaCompile) {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
         options.compilerArgs += ['-Xlint:-options']
     }
     
-    // Force Java 17 for all subprojects
+    // Force Java 21 for all subprojects
     subprojects {
         afterEvaluate { project ->
             if (project.hasProperty('android')) {
                 project.android {
                     compileOptions {
-                        sourceCompatibility JavaVersion.VERSION_17
-                        targetCompatibility JavaVersion.VERSION_17
+                        sourceCompatibility JavaVersion.VERSION_21
+                        targetCompatibility JavaVersion.VERSION_21
                     }
                 }
             }

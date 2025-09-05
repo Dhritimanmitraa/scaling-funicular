@@ -14,6 +14,7 @@ import '../../features/curriculum/presentation/screens/chapter_detail_screen.dar
 import '../../features/content/presentation/screens/video_player_screen.dart';
 import '../../features/content/presentation/screens/quiz_screen.dart';
 import '../../features/content/presentation/screens/quiz_results_screen.dart';
+import '../../features/content/presentation/screens/vr_video_selection_screen.dart';
 import '../../features/profile/presentation/screens/profile_screen.dart';
 
 class AppRouter {
@@ -42,12 +43,31 @@ class AppRouter {
       GoRoute(
         path: RouteNames.register,
         name: 'register',
-        builder: (context, state) => const RegisterScreen(),
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>?;
+          return RegisterScreen(
+            selectedBoardId: extra?['selectedBoardId'] as String?,
+            selectedClassId: extra?['selectedClassId'] as String?,
+          );
+        },
       ),
       GoRoute(
         path: RouteNames.curriculumSelection,
         name: 'curriculum-selection',
         builder: (context, state) => const CurriculumSelectionScreen(),
+      ),
+      GoRoute(
+        path: RouteNames.vrVideoSelection,
+        name: 'vr-video-selection',
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>?;
+          return VRVideoSelectionScreen(
+            boardId: extra?['boardId'] as String? ?? '',
+            classId: extra?['classId'] as String? ?? '',
+            boardName: extra?['boardName'] as String? ?? '',
+            classNumber: extra?['classNumber'] as int? ?? 0,
+          );
+        },
       ),
 
       // Main App Routes
@@ -144,7 +164,7 @@ class AppRouter {
     final storageService = ServiceLocator.storageService;
     
     // Check if user is logged in
-    final isLoggedIn = storageService.isLoggedIn();
+    final isLoggedIn = await storageService.isLoggedIn();
     
     // Check if onboarding is completed
     final hasCompletedOnboarding = storageService.getOnboardingCompleted();

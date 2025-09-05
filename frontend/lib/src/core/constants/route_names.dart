@@ -19,6 +19,7 @@ class RouteNames {
   static const String videoPlayer = '/video-player';
   static const String quiz = '/quiz';
   static const String quizResults = '/quiz-results';
+  static const String vrVideoSelection = '/vr-video-selection';
   
   // Profile Routes
   static const String profile = '/profile';

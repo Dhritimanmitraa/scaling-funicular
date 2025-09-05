@@ -129,6 +129,11 @@ class User {
     return attempts;
   }
 
+  // Check if user has completed curriculum selection
+  get hasCompletedCurriculumSelection() {
+    return this.selectedBoardId !== null && this.selectedClassId !== null;
+  }
+
   // Convert to JSON (exclude sensitive data)
   toJSON() {
     return {
@@ -136,6 +141,7 @@ class User {
       email: this.email,
       selectedBoardId: this.selectedBoardId,
       selectedClassId: this.selectedClassId,
+      hasCompletedCurriculumSelection: this.hasCompletedCurriculumSelection,
       points: this.points,
       currentStreak: this.currentStreak,
       lastActiveDate: this.lastActiveDate,

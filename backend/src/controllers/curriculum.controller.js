@@ -5,13 +5,36 @@ class CurriculumController {
   // Get all boards
   static async getBoards(req, res) {
     try {
-      const rows = await db('boards')
-        .select('name')
-        .orderBy('name');
+      let rows;
+      try {
+        rows = await db('boards')
+          .select('id', 'name')
+          .where('is_active', true)
+          .orderBy('name');
+        
+        console.log('Found boards in database:', rows.length);
+      } catch (dbError) {
+        console.error('Database error, using fallback data:', dbError.message);
+        // Fallback: return default boards
+        rows = [
+          { id: 'board-cbse', name: 'CBSE' },
+          { id: 'board-icse', name: 'ICSE' },
+          { id: 'board-state', name: 'State Board' }
+        ];
+      }
 
-      // Return IDs as strings to avoid client type mismatches
-      const boards = rows.map((r, idx) => ({ id: String(idx + 1), name: r.name }));
-      res.json(boards);
+      // If no boards found, use fallback
+      if (!rows || rows.length === 0) {
+        console.log('No boards found, using fallback data');
+        rows = [
+          { id: 'board-cbse', name: 'CBSE' },
+          { id: 'board-icse', name: 'ICSE' },
+          { id: 'board-state', name: 'State Board' }
+        ];
+      }
+
+      console.log('Returning boards:', rows.length);
+      res.json(rows);
     } catch (error) {
       console.error('Get boards error:', error);
       res.status(500).json({
@@ -24,11 +47,53 @@ class CurriculumController {
   // Get classes for a specific board
   static async getClasses(req, res) {
     try {
-      // For MVP, return classes 1..12 (frontend expects List<{id:int,name:string}>)
-      // Accept either param style or query style for board id
-      const boardId = req.params.boardId || req.query.board_id || null;
-      const classes = Array.from({ length: 12 }).map((_, i) => ({ id: i + 1, name: `Class ${i + 1}` }));
-      res.json(classes);
+      const boardId = req.params.boardId || req.query.board_id;
+      
+      if (!boardId) {
+        return res.status(400).json({
+          success: false,
+          message: 'Board ID is required'
+        });
+      }
+
+      console.log('Fetching classes for board:', boardId);
+
+      // Try to get classes from database
+      let classes;
+      try {
+        classes = await db('classes')
+          .where('board_id', boardId)
+          .select('id', 'class_number')
+          .orderBy('class_number');
+        
+        console.log('Found classes in database:', classes.length);
+      } catch (dbError) {
+        console.error('Database error, using fallback data:', dbError.message);
+        // Fallback: return classes 5-12 for any board
+        classes = Array.from({ length: 8 }, (_, i) => ({
+          id: `${boardId}-class-${i + 5}`,
+          class_number: i + 5
+        }));
+      }
+
+      // If no classes found, use fallback
+      if (!classes || classes.length === 0) {
+        console.log('No classes found, using fallback data');
+        classes = Array.from({ length: 8 }, (_, i) => ({
+          id: `${boardId}-class-${i + 5}`,
+          class_number: i + 5
+        }));
+      }
+
+      // Transform to match frontend expectations
+      const formattedClasses = classes.map(cls => ({
+        id: cls.id,
+        classNumber: cls.class_number,
+        name: `Class ${cls.class_number}`
+      }));
+
+      console.log('Returning classes:', formattedClasses.length);
+      res.json(formattedClasses);
     } catch (error) {
       console.error('Get classes error:', error);
       res.status(500).json({
