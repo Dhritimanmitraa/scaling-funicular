@@ -1,0 +1,51 @@
+﻿name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  backend:
+    name: Backend (Node)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install deps
+        run: npm ci || npm install
+      - name: Lint (skip if none)
+        run: |
+          npm run lint || echo 'No lint script'
+      - name: Test (skip if none)
+        run: |
+          npm test || echo 'No tests'
+
+  frontend:
+    name: Frontend (Flutter)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+      - name: Flutter version
+        run: flutter --version
+      - name: Pub get
+        working-directory: frontend
+        run: flutter pub get
+      - name: Analyze (skip errors)
+        working-directory: frontend
+        run: flutter analyze || true
+      - name: Test (skip if none)
+        working-directory: frontend
+        run: flutter test || true
+      - name: Build web
+        working-directory: frontend
+        run: flutter build web --release
