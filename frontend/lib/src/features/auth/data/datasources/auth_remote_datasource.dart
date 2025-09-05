@@ -31,7 +31,24 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       },
     );
 
-    return AuthResponseModel.fromJson(response.data);
+    // Backend returns: { success, message, data: { user: {...}, token: '...' } }
+    final body = response.data as Map?;
+    final data = body?['data'] as Map?;
+    if (data == null) {
+      throw Exception(body?['message'] ?? AppConstants.serverErrorMessage);
+    }
+
+    final userJson = (data['user'] as Map?)?.cast<String, dynamic>();
+    final token = data['token'] as String?;
+    if (userJson == null || token == null) {
+      throw Exception('Invalid login response');
+    }
+
+    return AuthResponseModel(
+      user: AuthUserModel.fromJson(userJson),
+      accessTokenField: token,
+      refreshTokenField: '',
+    );
   }
 
   @override
@@ -41,12 +58,34 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       data: {
         'email': request.email,
         'password': request.password,
-        if (request.boardId != null) 'board_id': request.boardId,
-        if (request.classId != null) 'class_id': request.classId,
+        if (request.boardId != null) 'selectedBoardId': request.boardId,
+        if (request.classId != null) 'selectedClassId': request.classId,
       },
     );
 
-    return AuthResponseModel.fromJson(response.data);
+    // Handle duplicate email
+    if (response.statusCode == 409) {
+      throw Exception('Email already in use');
+    }
+
+    // Backend returns: { success, message, data: { user: {...}, token: '...' } }
+    final body = response.data as Map?;
+    final data = body?['data'] as Map?;
+    if (data == null) {
+      throw Exception(body?['message'] ?? AppConstants.serverErrorMessage);
+    }
+
+    final userJson = (data['user'] as Map?)?.cast<String, dynamic>();
+    final token = data['token'] as String?;
+    if (userJson == null || token == null) {
+      throw Exception('Invalid registration response');
+    }
+
+    return AuthResponseModel(
+      user: AuthUserModel.fromJson(userJson),
+      accessTokenField: token,
+      refreshTokenField: '',
+    );
   }
 
   @override
